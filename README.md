@@ -20,7 +20,7 @@ lein run
   <img src="https://github.com/MokkeMeguru/gmail-clojure/blob/main/doc/oauth.png" width="400">
   
   - add oauth client id for desktop
-    and then, download secret json file for this client id
+    and then, download secret json file for this client id as **credential.json**
     
   <img src="https://github.com/MokkeMeguru/gmail-clojure/blob/main/doc/auth-account.png" width="400">
-  
+- save **credential.json** into resources/
