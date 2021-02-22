@@ -96,7 +96,7 @@ info: channel was closed
 
   <img src="https://github.com/MokkeMeguru/gmail-clojure/blob/main/doc/oauth.png" width="400">
 
-  - add oauth client id for web server (node.js, tomcat etc...) to use user-data
+  - add credential information for web server (node.js, tomcat etc...) to use user-data
     and then, download secret json file for this client id as **credential.json**
 
   <img src="https://github.com/MokkeMeguru/gmail-clojure/blob/main/doc/wizerd.png" width="400">
