@@ -9,7 +9,9 @@
                  [com.google.apis/google-api-services-gmail "v1-rev83-1.23.0"]
                  [com.sun.mail/javax.mail "1.6.2"]
                  [commons-codec/commons-codec "1.15"]
-                 [orchestra "2021.01.01-1"]]
+                 [orchestra "2021.01.01-1"]
+                 [org.clojure/tools.cli "1.0.194"]
+                 [org.clojure/core.async "1.3.610"]]
   :main ^:skip-aot gmail-clojure.core
   :target-path "target/%s"
   :profiles {:dev {:resource-paths ["resources"]}
