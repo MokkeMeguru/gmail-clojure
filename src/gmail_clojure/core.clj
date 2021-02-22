@@ -3,7 +3,7 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.java.io :as io]
             [clojure.tools.cli :refer [parse-opts]]
-            [clojure.core.async :refer [go-loop <! timeout]]
+            [clojure.core.async :refer [go-loop <!! <! >!! timeout chan]]
             ;; test
             [orchestra.spec.test :as st])
   (:import [com.google.api.services.gmail GmailScopes]
@@ -302,7 +302,6 @@ sended from: xxx.service
 
 (defn get-gmail-labels
   [credential-file tokens-dir scopes]
-  (println (type credential-file))
   (let [credential (get-credential credential-file tokens-dir scopes)
         service (get-service application-name credential)
         user-id user]
@@ -310,7 +309,7 @@ sended from: xxx.service
 
 (defn api-update-cron "
   "
-  [credential-file tokens-dir scopes]
+  [credential-file tokens-dir scopes cron-channel]
   (let [channel-open? (atom true)]
     (go-loop [sec 1]
       (when @channel-open?
@@ -319,7 +318,8 @@ sended from: xxx.service
         (if (> sec 10)
           (do
             (reset! channel-open? false)
-            (println "close"))
+            (println "close")
+            (>!! cron-channel "info: channel was closed"))
           (do
             (println "temporary-task-succeed?: " (-> (get-gmail-labels credential-file tokens-dir scopes) count zero? not))
             (recur (inc sec))))))))
@@ -342,13 +342,8 @@ sended from: xxx.service
     :default (io/resource "tokens")
     :parse-fn io/resource]
    ["-h" "--help" "Print this help" :default false]
-   ;; ["-s" "--scopes SCOPE" "Google API's scopes (multi args)"
-   ;;  :default []
-   ;;  :assoc-fn (fn [m k v]
-   ;;              (assoc m k (conj (get m k) v)))
-   ;;  :parse-fn #(str "https://www.googleapis.com/auth/gmail." %)]
-   ["-a" "--address" "Test email address"
-    :default "meguru.mokke@gmail.com"
+   ["-a" "--address ADDRESS" "Test email address"
+    :default ""
     :parse-fn str
     :validate [#(s/valid? ::address %)]]])
 
@@ -367,20 +362,22 @@ sended from: xxx.service
   "I don't do a whole lot ... yet."
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        {:keys [example-task cron-token generate-key port credential-file tokens-dir address help]} options]
+        {:keys [example-task cron-token generate-key port credential-file tokens-dir address help]} options
+        cron-channel (chan)]
     (cond
       help (println summary)
       generate-key (get-new-credential credential-file tokens-dir [GmailScopes/GMAIL_LABELS GmailScopes/GMAIL_SEND] port)
-      cron-token (api-update-cron credential-file tokens-dir [GmailScopes/GMAIL_LABELS])
+      cron-token (do (api-update-cron credential-file tokens-dir [GmailScopes/GMAIL_LABELS] cron-channel)
+                     (println (<!! cron-channel)))
       (= example-task "list_labels") (clojure.pprint/pprint
                                       (cons "Labels:"
                                             (map
                                              (fn [k] (.getName k))
                                              (get-gmail-labels credential-file tokens-dir [GmailScopes/GMAIL_LABELS]))))
-      (and (= example-task "send_mail")) (send-example-message credential-file tokens-dir [GmailScopes/GMAIL_SEND] application-name address)
+      (and (= example-task "send_mail")) (clojure.pprint/pprint (send-example-message credential-file tokens-dir [GmailScopes/GMAIL_SEND] application-name address))
       :else (println summary))))
 
 ;; (-main "-g" "-c" "credentials.json" "-t" "tokens")
 ;; (-main "-e" "list_labels" "-c" "credentials.json" "-t" "tokens" "-p" "8090")
-;; (-main "-e" "send_mail" "-c" "credentials.json" "-t" "tokens" "-p" "8090")
+;; (-main "-e" "send_mail" "-c" "credentials.json" "-t" "tokens" "-a" "meguru.mokke@gmail.com")
 ;; (-main "-l" "-c" "credentials.json" "-t" "tokens")
