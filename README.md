@@ -96,7 +96,7 @@ info: channel was closed
 
   <img src="https://github.com/MokkeMeguru/gmail-clojure/blob/main/doc/oauth.png" width="400">
 
-  - add oauth client id for desktop
+  - add oauth client id for web server (node.js, tomcat etc...)
     and then, download secret json file for this client id as **credential.json**
 
   <img src="https://github.com/MokkeMeguru/gmail-clojure/blob/main/doc/auth-account.png" width="400">
