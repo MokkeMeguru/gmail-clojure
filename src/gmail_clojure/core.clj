@@ -168,7 +168,7 @@
   (def credential-file (io/resource \"credential.json\"))
   (def tokens-dir (io/resource \"tokens\"))
 
-  (get-credential credential-file tokens-dir scopes http-transport)
+  (get-credential credential-file tokens-dir scopes)
   ```
   "
   [credential-file tokens-dir scopes]
@@ -234,8 +234,8 @@
 
   ```clojure
   (defn
-  (let [credential (get-credential credential-file tokens-dir scopes https-transport)
-        service (get-service application-name credential http-transport)
+  (let [credential (get-credential credential-file tokens-dir scopes)
+        service (get-service application-name credential)
         user-id \"me\"
         mime-message (create-message)
         gmail-message ()
