@@ -7,9 +7,19 @@ the usage of gmail api with clojure
 help
 
 ```sh
-lein run -h
+lein run -- --help
 ```
 
+```text
+  -g, --generate-key                                                                                               generate stored credential key from oauth
+  -e, --example-task TASK                                                                                          example task choices from (send_mail, list_labels)
+  -l, --cron-token                                                                                                 repeat update token in async as an example
+  -p, --port PORT                        8090
+  -c, --credential-file CREDENTIAL_FILE  file:/run/media/meguru/P/Github/gmail_clojure/resources/credentials.json  credential file from google https://console.cloud.google.com/apis/credentials
+  -t, --tokens-dir TOKENS_DIR            file:/run/media/meguru/P/Github/gmail_clojure/resources/tokens            tokens dir to save
+  -h, --help                                                                                                       Print this help
+  -a, --address ADDRESS                                                                                            Test email address
+```
 ### get credential tokens from oauth 2.0 using browser
 
 ```sh
